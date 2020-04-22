@@ -6,6 +6,11 @@ from tkinter import colorchooser
 from tkinter import messagebox as mb
 from config import Point
 import config as cfg
+import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+import time
 import tkinter.colorchooser
 root = Tk()
 root.geometry("1800x900")
@@ -27,8 +32,10 @@ def check(event):
         value = int(entry_for_center_y.get())
         value = int(entry_for_radius.get())
         btn_for_make_circle.config(state = "normal")
+        btn_for_time_circle.config(state = "normal")
     except:
         btn_for_make_circle.config(state="disabled")
+        btn_for_time_circle.config(state="disabled")
 
     try:
         value = int(entry_for_center_x.get())
@@ -490,8 +497,168 @@ def clear_all():
     canv.create_rectangle(1500, 130, 1550, 180, fill=colour)
 
 
-def time_diff():
-    pass
+def diff_time_circle():
+    x = 100
+    y = 100
+    start_r = 10
+
+
+    r = [0] * 20
+
+    times = [0] * 5
+    for i in range(5):
+        times[i] = []
+
+    step = 500
+    r[0] = start_r
+    for i in range(1, 20):
+        r[i] = r[i - 1] + step
+
+    print(r)
+
+
+    for i in range(20):
+        start_time_library = time.time()
+        library_make_circle(x, y, r[i])
+        end_time_library = time.time()
+        time_library = end_time_library - start_time_library
+        times[0].append(time_library)
+
+
+
+
+
+    for i in range(20):
+        start_time_canon = time.time()
+        normal_c(x, y, r[i])
+        end_time_canon = time.time()
+        time_canon = end_time_canon - start_time_canon
+        times[1].append(time_canon)
+
+
+    for i in range(20):
+        start_time_param = time.time()
+        param_c(x, y, r[i])
+        end_time_param = time.time()
+        time_param = end_time_param - start_time_param
+        times[2].append(time_param)
+
+
+
+    for i in range(20):
+        start_time_brezenham = time.time()
+        brezenham_c(x, y, r[i])
+        end_time_brezenham = time.time()
+        time_brezenham = end_time_brezenham - start_time_brezenham
+        times[3].append(time_brezenham)
+
+
+
+    for i in range(20):
+        start_time_middle_point = time.time()
+        middle_point_c(x, y, r[i])
+        end_time_middle_point = time.time()
+        time_middle_point = end_time_middle_point - start_time_middle_point
+        times[4].append(time_middle_point)
+
+    print(times)
+
+    print(r)
+
+    Methods = ["Библотечный", "Канонический", "Параметрический", "Брезенхема", "Средней точки"]
+
+    for i in range(5):
+        plt.plot(r, times[i], label = Methods[i])
+
+    clear_all()
+
+    plt.legend()
+
+    plt.xlabel('Размеры')
+    plt.ylabel('Время')
+
+    plt.grid()
+    plt.show()
+
+def diff_time_ellips():
+    x = 100
+    y = 100
+    a = 10
+    b = 20
+    r_a = [0] * 20
+    r_b = [0] * 20
+    step = 500
+    r_a[0] = a
+    r_b[0] = b
+    for i in range(1, 20):
+        r_a[i] = r_a[i - 1] + step
+        r_b[i] = r_b[i - 1] + step
+
+    times = [0] * 5
+    for i in range(len(times)):
+        times[i] = []
+
+    for i in range(20):
+        start_time_library = time.time()
+        library_o(x, y, r_a[i], r_b[i])
+        end_time_library = time.time()
+        time_library = end_time_library - start_time_library
+        times[0].append(time_library)
+
+
+
+
+
+    for i in range(20):
+        start_time_canon = time.time()
+        normal_o(x, y, r_a[i], r_b[i])
+        end_time_canon = time.time()
+        time_canon = end_time_canon - start_time_canon
+        times[1].append(time_canon)
+
+
+    for i in range(20):
+        start_time_param = time.time()
+        param_o(x, y, r_a[i], r_b[i])
+        end_time_param = time.time()
+        time_param = end_time_param - start_time_param
+        times[2].append(time_param)
+
+
+
+    for i in range(20):
+        start_time_brezenham = time.time()
+        brezenham_o(x, y, r_a[i], r_b[i])
+        end_time_brezenham = time.time()
+        time_brezenham = end_time_brezenham - start_time_brezenham
+        times[3].append(time_brezenham)
+
+
+
+    for i in range(20):
+        start_time_middle_point = time.time()
+        middle_point_o(x, y, r_a[i], r_b[i])
+        end_time_middle_point = time.time()
+        time_middle_point = end_time_middle_point - start_time_middle_point
+        times[4].append(time_middle_point)
+
+    Methods = ["Библотечный", "Канонический", "Параметрический", "Брезенхема", "Средней точки"]
+
+    for i in range(5):
+        plt.plot(r_a, times[i], label=Methods[i])
+
+    clear_all()
+
+    plt.legend()
+
+    plt.xlabel('Размеры')
+    plt.ylabel('Время')
+
+    plt.grid()
+    plt.show()
+
+
+
 
 
 canv = Canvas(root, width=1800, height=900, bg="white")
@@ -636,8 +803,11 @@ btn_for_make_more_ellips.place(x = 1500, y = 760, width = 230, height = 60)
 btn_for_clear = Button(root, text = "Очистить всё", command = clear_all)
 btn_for_clear.place(x = 1500, y = 840, width = 230, height = 30)
 
-btn_for_time = Button(root, text = "Сравнить время", command = time_diff)
-btn_for_time.place(x = 1200, y = 840, width = 230, height = 30)
+btn_for_time_circle = Button(root, text = "Сравнить время\nпостроения окружностей", command = diff_time_circle)
+btn_for_time_circle.place(x = 1200, y = 840, width = 230, height = 30)
+
+btn_for_time_ellips = Button(root, text = "Сравнить время\nпостроения эллипсов", command = diff_time_ellips)
+btn_for_time_ellips.place(x = 1200, y = 800, width = 230, height = 30)
 
 
 mainloop()
